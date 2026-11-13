@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crypto Terminal App</title>
+  <style>
+    :root{color-scheme:dark;--bg:#090d14;--panel:#111925;--line:#243143;--muted:#8d9bad;--green:#22c985;--red:#ff6577;--text:#edf3fb;--blue:#6ba8ff}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#142238 0,#090d14 55%);color:var(--text);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+    .wrap{max-width:1200px;margin:auto;padding:26px 18px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}
+    h1{font-size:25px;margin:0 0 5px}.sub,.muted{color:var(--muted)}.status{font-size:12px;color:var(--green)}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+    .card,.tablebox{background:linear-gradient(145deg,#141e2c,#0f1722);border:1px solid var(--line);border-radius:16px;padding:17px}
+    .label{font-size:12px;color:var(--muted);margin-bottom:9px}.value{font-size:23px;font-weight:750;letter-spacing:-.5px;overflow-wrap:anywhere}
+    .positive{color:var(--green)}.negative{color:var(--red)}.section{display:flex;justify-content:space-between;align-items:center;margin:24px 0 12px;gap:12px}
+    h2{font-size:17px;margin:0}.btn{border:1px solid #33445a;background:#192638;color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer}
+    .tablebox{padding:0;overflow:hidden}.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:900px}th,td{text-align:left;padding:14px 13px;border-bottom:1px solid var(--line);white-space:nowrap}
+    th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:#121c29}td{font-size:13px}
+    .pill{padding:5px 8px;border-radius:7px;font-size:11px;font-weight:700}.long{color:var(--green);background:#123328}.short{color:var(--red);background:#391d28}
+    .empty,.error{padding:25px;text-align:center;color:var(--muted)}.error{color:var(--red)}.foot{font-size:11px;color:var(--muted);line-height:1.6;margin-top:15px}
+    @media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:18px 12px 40px}.value{font-size:19px}.top{align-items:flex-start}h1{font-size:21px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><h1>Crypto Terminal App</h1><div class="sub">Bybit · USDT Perpetual · Live positions</div></div>
+    <div style="text-align:right"><div id="status" class="status">● Подключение…</div><div id="updated" class="muted" style="font-size:11px;margin-top:5px">—</div></div>
+  </header>
+
+  <section class="grid">
+    <div class="card"><div class="label">Equity аккаунта</div><div id="equity" class="value">—</div></div>
+    <div class="card"><div class="label">Нереализованный PnL</div><div id="pnl" class="value">—</div></div>
+    <div class="card"><div class="label">Объём позиций</div><div id="volume" class="value">—</div></div>
+    <div class="card"><div class="label">Открытых позиций</div><div id="count" class="value">—</div></div>
+  </section>
+  <section class="grid">
+    <div class="card"><div class="label">Баланс кошелька</div><div id="wallet" class="value">—</div></div>
+    <div class="card"><div class="label">Доступный баланс</div><div id="available" class="value">—</div></div>
+    <div class="card"><div class="label">Маржа позиций</div><div id="margin" class="value">—</div></div>
+    <div class="card"><div class="label">ROI на маржу</div><div id="roi" class="value">—</div></div>
+  </section>
+
+  <div class="section"><h2>Открытые позиции</h2><button id="refresh" class="btn">↻ Обновить</button></div>
+  <div class="tablebox"><div class="scroll">
+    <table><thead><tr>
+      <th>Пара</th><th>Направление</th><th>Размер</th><th>Номинал</th><th>Вход</th><th>Mark</th><th>PnL</th><th>ROI</th><th>Плечо</th><th>Маржа</th><th>Ликвидация</th><th>TP / SL</th>
+    </tr></thead><tbody id="rows"><tr><td colspan="12" class="empty">Загрузка…</td></tr></tbody></table>
+  </div></div>
+  <p class="foot">Данные обновляются автоматически каждые 5 секунд. Отображаются USDT-линейные фьючерсные позиции. PnL% — доходность относительно начальной маржи позиции. Не используйте эту панель как единственный инструмент контроля риска.</p>
+</div>
+<script>
+  // После публикации backend замени значение ниже на URL своего сервиса, например:
+  // https://bybit-live-api.onrender.com
+  const API_BASE = "https://YOUR-BACKEND-URL";
+  const REFRESH_MS = 5000;
+
+  const $ = id => document.getElementById(id);
+  const fmt = (v, digits=2) => {
+    if (v === null || v === undefined || v === "") return "—";
+    const n = Number(v);
+    return Number.isFinite(n) ? n.toLocaleString("en-US",{minimumFractionDigits:digits,maximumFractionDigits:digits}) : "—";
+  };
+  const usd = v => v == null ? "—" : "$" + fmt(v);
+  const signedUsd = v => {
+    const n=Number(v||0); return (n>=0?"+":"−")+"$"+fmt(Math.abs(n));
+  };
+  const setMoney = (id,v) => $(id).textContent=usd(v);
+  const setPnl = (id,v) => {
+    const n=Number(v||0); $(id).textContent=signedUsd(n);
+    $(id).className="value "+(n>0?"positive":n<0?"negative":"");
+  };
+
+  async function loadDashboard(){
+    try{
+      if(API_BASE.includes("YOUR-BACKEND-URL")) throw new Error("Укажи URL backend-сервера в API_BASE в файле index.html");
+      const response=await fetch(API_BASE.replace(/\/$/,"")+"/api/dashboard",{cache:"no-store"});
+      const data=await response.json();
+      if(!response.ok) throw new Error(data.detail||"Ошибка API");
+      const s=data.summary||{};
+      setMoney("equity",s.equity); setPnl("pnl",s.totalUnrealisedPnl);
+      setMoney("volume",s.totalPositionValue); $("count").textContent=s.openPositions??0;
+      setMoney("wallet",s.walletBalance); setMoney("available",s.availableBalance);
+      setMoney("margin",s.totalInitialMargin);
+      $("roi").textContent=s.roiOnInitialMargin==null?"—":(Number(s.roiOnInitialMargin)>=0?"+":"")+fmt(s.roiOnInitialMargin)+"%";
+      $("roi").className="value "+(Number(s.roiOnInitialMargin)>0?"positive":Number(s.roiOnInitialMargin)<0?"negative":"");
+      const positions=data.positions||[];
+      $("rows").innerHTML=positions.length?positions.map(p=>{
+        const long=p.side==="Buy", pnl=Number(p.unrealisedPnl||0), roi=p.roiPercent==null?null:Number(p.roiPercent);
+        return `<tr>
+          <td><b>${escapeHtml(p.symbol||"—")}</b></td>
+          <td><span class="pill ${long?"long":"short"}">${long?"LONG":"SHORT"}</span></td>
+          <td>${fmt(p.size,6)}</td><td>${usd(p.positionValue)}</td>
+          <td>${fmt(p.entryPrice,6)}</td><td>${fmt(p.markPrice,6)}</td>
+          <td class="${pnl>0?"positive":pnl<0?"negative":""}"><b>${signedUsd(pnl)}</b></td>
+          <td class="${roi>0?"positive":roi<0?"negative":""}">${roi==null?"—":(roi>=0?"+":"")+fmt(roi)+"%"}</td>
+          <td>${escapeHtml(p.leverage||"—")}x</td><td>${usd(p.positionIM)}</td>
+          <td>${p.liqPrice?fmt(p.liqPrice,6):"—"}</td><td>${p.takeProfit?fmt(p.takeProfit,6):"—"} / ${p.stopLoss?fmt(p.stopLoss,6):"—"}</td>
+        </tr>`;
+      }).join(""):`<tr><td colspan="12" class="empty">Открытых USDT-фьючерсных позиций нет</td></tr>`;
+      $("status").textContent="● Подключено"; $("status").style.color="var(--green)";
+      $("updated").textContent="Обновлено: "+new Date().toLocaleTimeString();
+    }catch(e){
+      $("status").textContent="● Нет подключения"; $("status").style.color="var(--red)";
+      $("rows").innerHTML=`<tr><td colspan="12" class="error">${escapeHtml(e.message)}</td></tr>`;
+    }
+  }
+  function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  $("refresh").addEventListener("click",loadDashboard);
+  loadDashboard(); setInterval(loadDashboard,REFRESH_MS);
+</script>
+</body></html>

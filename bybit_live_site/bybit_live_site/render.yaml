@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: bybit-live-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: BYBIT_API_KEY
+        sync: false
+      - key: BYBIT_API_SECRET
+        sync: false
+      - key: BYBIT_TESTNET
+        value: "false"
+      - key: ALLOWED_ORIGINS
+        value: "*"
