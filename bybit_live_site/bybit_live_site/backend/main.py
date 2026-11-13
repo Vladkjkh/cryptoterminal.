@@ -9,8 +9,8 @@ from pybit.unified_trading import HTTP
 
 load_dotenv()
 
-API_KEY = os.getenv("BYBIT_API_KEY", "").strip()
-API_SECRET = os.getenv("BYBIT_API_SECRET", "").strip()
+API_KEY = os.getenv("ImujnNLjDqzi4PLmiB", "").strip()
+API_SECRET = os.getenv("hJSYFuOTv9BU4rIBXpjxc4M6JNxZ2txgdWVq", "").strip()
 TESTNET = os.getenv("BYBIT_TESTNET", "false").lower() == "true"
 ALLOWED_ORIGINS = [
     x.strip() for x in os.getenv("ALLOWED_ORIGINS", "*").split(",") if x.strip()
