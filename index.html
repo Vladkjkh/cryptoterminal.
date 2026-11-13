@@ -1,62 +1,106 @@
-<!doctype html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#050907">
-<title>CryptoTerminal</title>
-<style>
-:root{--bg:#050907;--panel:#0b1410;--panel2:#0e1b15;--line:#1c3328;--green:#00f5a0;--muted:#91a79b;--text:#f4faf6;--red:#ff647c;--amber:#ffb454}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#123a29 0,transparent 48%),var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid var(--green);outline-offset:3px}.wrap{max-width:960px;margin:auto;padding:16px 15px calc(100px + env(safe-area-inset-bottom))}
-header{display:flex;align-items:center;gap:11px;padding:5px 1px 22px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#0e3a28,#071710);border:1px solid #176b49;color:var(--green);display:grid;place-items:center;font-size:24px;box-shadow:0 0 24px #00f5a016}.brand{font-weight:850;font-size:19px;letter-spacing:-.5px}.brand span{color:var(--green)}.subtitle{font-size:11px;color:var(--muted);margin-top:1px}.demo{margin-left:auto;border:1px solid #75542b;color:var(--amber);background:#241a0d;padding:6px 9px;border-radius:30px;font-size:10px;font-weight:800;letter-spacing:.8px}
-.eyebrow{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.15px}.hero{position:relative;overflow:hidden;border:1px solid #176847;border-radius:24px;padding:20px;background:linear-gradient(135deg,#10291d 0%,#09140f 70%);box-shadow:0 10px 38px #0004}.hero:after{content:"";position:absolute;right:-80px;top:-110px;width:240px;height:240px;border-radius:50%;background:#00f5a012;filter:blur(20px);pointer-events:none}.hero-head{display:flex;justify-content:space-between;align-items:center;gap:8px;position:relative;z-index:1}.icon-btn{background:#10261b;border:1px solid #254b38;color:#b4c7bc;border-radius:11px;width:36px;height:34px}.balance{font-size:clamp(32px,8vw,46px);font-weight:850;letter-spacing:-1.7px;margin:10px 0 3px;position:relative;z-index:1}.gain{color:var(--green);font-size:13px;font-weight:750}.gain span{color:var(--muted);font-weight:500}.hero-foot{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-top:16px;position:relative;z-index:1}.mini-chart{width:46%;height:49px}.microstat{font-size:12px;color:var(--muted)}.microstat strong{display:block;color:var(--text);font-size:14px;margin-top:2px}
-.section{margin-top:23px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}h2{font-size:16px;margin:0;font-weight:750}.subtle-link{border:0;background:transparent;color:var(--green);font-size:12px;padding:5px}
-.assets{display:grid;grid-template-columns:1fr 1fr;gap:10px}.asset{border:1px solid var(--line);border-radius:19px;padding:15px;background:linear-gradient(145deg,#0d1b14,#08100c);min-width:0}.asset-top{display:flex;align-items:center;gap:9px;margin-bottom:14px}.coin{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:white;font-size:20px;font-weight:900;flex-shrink:0}.btc{background:#f7931a}.eth{background:#6c63ff}.coin-name{font-size:14px;font-weight:750}.coin-symbol{font-size:11px;color:var(--muted)}.asset-amount{font-weight:800;font-size:17px;overflow-wrap:anywhere}.asset-value{font-size:12px;color:var(--muted);margin-top:4px}.asset-change{font-size:11px;color:var(--green);margin-top:9px}
-.cash-card{margin-top:10px;display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:18px;padding:14px;background:#0b1711}.cash-icon{width:39px;height:39px;border-radius:13px;background:#103624;color:var(--green);display:grid;place-items:center;font-size:21px;font-weight:800}.cash-info{flex:1;min-width:0}.cash-label{font-size:12px;color:var(--muted)}.cash-value{font-size:19px;font-weight:800;margin-top:2px}.cash-badge{font-size:10px;color:var(--green);border:1px solid #176a49;padding:6px 8px;border-radius:10px;white-space:nowrap}
-.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.quick{border:1px solid var(--line);background:#0b1711;border-radius:16px;padding:14px 8px;text-align:center;color:var(--text)}.quick .qicon{font-size:21px;color:var(--green);display:block;margin-bottom:7px}.quick strong{font-size:12px;display:block}.quick small{font-size:10px;color:var(--muted);display:block;margin-top:3px}
-.chart-card{border:1px solid var(--line);background:#0a1510;border-radius:20px;padding:14px 12px 12px}.periods{display:flex;gap:3px}.period{border:0;background:transparent;color:var(--muted);font-size:10px;padding:6px 7px;border-radius:8px}.period.active{color:var(--green);background:#103b29}.chart{width:100%;height:160px;display:block}.chart-labels{display:flex;justify-content:space-between;color:#6f887b;font-size:10px;padding:0 3px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{border:1px solid var(--line);border-radius:17px;padding:14px;background:#0b1711}.stat .label{font-size:11px;color:var(--muted)}.stat .num{font-size:19px;font-weight:800;margin-top:5px}.positive{color:var(--green)}.notice{margin:20px 4px 0;text-align:center;color:#71877b;font-size:10px}
-.view{display:none}.view.active{display:block}.nav{position:fixed;z-index:10;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:#07100df2;border-top:1px solid #20392d;backdrop-filter:blur(18px)}.nav button{border:1px solid transparent;border-radius:13px;padding:8px 3px 7px;background:transparent;color:var(--muted);font-size:10px}.nav .ico{display:block;font-size:19px;margin-bottom:2px}.nav button.active{color:var(--green);background:#0d2a1c;border-color:#174e36}
-.panel{border:1px solid var(--line);background:#0b1711;border-radius:19px;padding:16px}.row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #1b3025}.row:last-child{border-bottom:0}.grow{flex:1;min-width:0}.row small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.tag{font-size:10px;border:1px solid #176a49;color:var(--green);padding:5px 7px;border-radius:8px;white-space:nowrap}.cta{border:0;border-radius:13px;background:var(--green);color:#032015;font-weight:850;padding:12px;width:100%;margin-top:13px}.empty-icon{font-size:36px;margin-bottom:10px}.center{text-align:center;padding:25px 18px}.muted{color:var(--muted)}
-@media(min-width:650px){.wrap{padding-top:25px}.assets{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding:26px}.chart{height:220px}.nav{left:50%;right:auto;transform:translateX(-50%);width:min(680px,100%);border:1px solid #20392d;border-bottom:0;border-radius:18px 18px 0 0}.quick{padding:17px}}
-</style>
-</head>
-<body>
-<div class="wrap">
-<header><div class="logo">⌁</div><div><div class="brand">Crypto<span>Terminal</span></div><div class="subtitle">Твой капитал · в одном месте</div></div><div class="demo">● DEMO</div></header>
-<main>
-<section id="home" class="view active">
-<div class="hero">
-<div class="hero-head"><div class="eyebrow">Общая стоимость портфеля</div><button class="icon-btn" id="hideBalance" aria-label="Скрыть суммы">◉</button></div>
-<div class="balance sensitive">$24,850.32</div><div class="gain">↗ +12.47% <span>за последние 30 дней</span></div>
-<div class="hero-foot"><div class="microstat">Изменение за месяц<strong class="positive">+$2,750.32</strong></div>
-<svg class="mini-chart" viewBox="0 0 180 50" preserveAspectRatio="none"><defs><linearGradient id="mini" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00f5a0" stop-opacity=".25"/><stop offset="1" stop-color="#00f5a0" stop-opacity="0"/></linearGradient></defs><path d="M0 44 L13 36 L24 39 L37 27 L48 32 L61 20 L74 27 L86 17 L98 23 L111 12 L123 18 L136 8 L148 14 L162 5 L180 2 L180 50 L0 50Z" fill="url(#mini)"/><path d="M0 44 L13 36 L24 39 L37 27 L48 32 L61 20 L74 27 L86 17 L98 23 L111 12 L123 18 L136 8 L148 14 L162 5 L180 2" fill="none" stroke="#00f5a0" stroke-width="2"/></svg></div>
-</div>
-<div class="section"><div class="section-head"><h2>Твои активы</h2><button class="subtle-link" data-goto="analytics">Подробнее ↗</button></div>
-<div class="assets">
-<div class="asset"><div class="asset-top"><div class="coin btc">₿</div><div><div class="coin-name">Bitcoin</div><div class="coin-symbol">BTC</div></div></div><div class="asset-amount sensitive">0.7421 BTC</div><div class="asset-value sensitive">$33,616.30</div><div class="asset-change">↗ +8.21% <span class="muted">за 30 дней</span></div></div>
-<div class="asset"><div class="asset-top"><div class="coin eth">◆</div><div><div class="coin-name">Ethereum</div><div class="coin-symbol">ETH</div></div></div><div class="asset-amount sensitive">3.2167 ETH</div><div class="asset-value sensitive">$10,421.76</div><div class="asset-change">↗ +10.12% <span class="muted">за 30 дней</span></div></div>
-</div>
-<div class="cash-card"><div class="cash-icon">$</div><div class="cash-info"><div class="cash-label">Свободные средства</div><div class="cash-value sensitive">$8,420.32</div></div><div class="cash-badge">Доступно</div></div>
-</div>
-<div class="section"><div class="section-head"><h2>Быстрые действия</h2></div><div class="quick-actions"><button class="quick" data-goto="trading"><span class="qicon">⇄</span><strong>Торговля</strong><small>Позиции и ордера</small></button><button class="quick" data-goto="analytics"><span class="qicon">◔</span><strong>Аналитика</strong><small>Результаты портфеля</small></button><button class="quick" data-goto="settings"><span class="qicon">⚙</span><strong>Настройки</strong><small>Подключения</small></button></div></div>
-<div class="section"><div class="section-head"><h2>Динамика капитала</h2><div class="periods"><button class="period">1Д</button><button class="period">1Н</button><button class="period active">1М</button><button class="period">3М</button><button class="period">1Г</button></div></div>
-<div class="chart-card"><svg class="chart" viewBox="0 0 340 180" preserveAspectRatio="none"><defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00f5a0" stop-opacity=".22"/><stop offset="1" stop-color="#00f5a0" stop-opacity="0"/></linearGradient></defs><g stroke="#1a3024" stroke-width="1"><line x1="0" y1="25" x2="340" y2="25"/><line x1="0" y1="65" x2="340" y2="65"/><line x1="0" y1="105" x2="340" y2="105"/><line x1="0" y1="145" x2="340" y2="145"/></g><path d="M0 151 L16 133 L30 139 L45 117 L60 124 L76 98 L90 108 L105 86 L121 96 L137 73 L151 84 L166 68 L180 78 L196 51 L211 62 L225 44 L240 56 L256 34 L271 45 L286 22 L302 32 L320 14 L340 7 L340 180 L0 180Z" fill="url(#fill)"/><path d="M0 151 L16 133 L30 139 L45 117 L60 124 L76 98 L90 108 L105 86 L121 96 L137 73 L151 84 L166 68 L180 78 L196 51 L211 62 L225 44 L240 56 L256 34 L271 45 L286 22 L302 32 L320 14 L340 7" fill="none" stroke="#00f5a0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="chart-labels"><span>01 НОЯ</span><span>08 НОЯ</span><span>15 НОЯ</span><span>22 НОЯ</span><span>30 НОЯ</span></div></div></div>
-<p class="notice">Демо-данные для оформления интерфейса · к бирже пока не подключено</p>
-</section>
-<section id="trading" class="view"><div class="section-head"><h2>Торговля</h2><span class="tag">DEMO</span></div><div class="panel"><div class="eyebrow">Торговый терминал</div><h2 style="margin-top:7px">Подключение биржи</h2><p class="muted" style="margin-top:8px;font-size:13px">Здесь появятся спотовые и фьючерсные позиции, ордера, средняя цена входа и защитные стопы.</p><button class="cta" onclick="alert('Подключение биржи добавим следующим этапом. Пока сайт показывает только демо-данные.')">Настроить биржу позже</button></div><div class="section panel"><h2>Избранные рынки</h2><div class="row"><div class="coin btc">₿</div><div class="grow"><b>BTC / USDT</b><small>Bitcoin</small></div><span class="tag">Избранное</span></div><div class="row"><div class="coin eth">◆</div><div class="grow"><b>ETH / USDT</b><small>Ethereum</small></div><span class="tag">Избранное</span></div></div></section>
-<section id="analytics" class="view"><div class="section-head"><h2>Аналитика</h2><span class="tag">DEMO</span></div><div class="stats"><div class="stat"><div class="label">Общий капитал</div><div class="num sensitive">$24,850</div><div class="asset-change">↗ +12.47%</div></div><div class="stat"><div class="label">Реализованный PnL</div><div class="num positive">+$1,420</div><div class="label">Закрытые сделки</div></div><div class="stat"><div class="label">Нереализованный PnL</div><div class="num positive">+$830</div><div class="label">Открытые позиции</div></div><div class="stat"><div class="label">Комиссии</div><div class="num">$126</div><div class="label">За выбранный период</div></div></div><div class="section panel"><h2>Распределение активов</h2><div class="row"><div class="coin btc">₿</div><div class="grow"><b>Bitcoin</b><small>54.5% портфеля</small></div><b>54.5%</b></div><div class="row"><div class="coin eth">◆</div><div class="grow"><b>Ethereum</b><small>31.5% портфеля</small></div><b>31.5%</b></div><div class="row"><div class="cash-icon">$</div><div class="grow"><b>Доллары и другие</b><small>14% портфеля</small></div><b>14%</b></div></div><p class="notice">Пример статистики. Реальные расчёты подключим позже.</p></section>
-<section id="settings" class="view"><h2>Настройки</h2><div class="section panel"><div class="row"><div class="grow"><b>Скрыть суммы</b><small>Спрятать баланс на экране</small></div><button class="icon-btn" id="privacy">◉</button></div><div class="row"><div class="grow"><b>Подключение биржи</b><small>API пока не настроен</small></div><span class="tag">Не подключено</span></div><div class="row"><div class="grow"><b>Безопасность</b><small>Не храните API-ключи в коде сайта</small></div><span>◈</span></div></div></section>
-</main>
-</div>
-<nav class="nav"><button class="active" data-view="home"><span class="ico">⌂</span>Главная</button><button data-view="trading"><span class="ico">⇄</span>Торговля</button><button data-view="analytics"><span class="ico">◔</span>Аналитика</button><button data-view="settings"><span class="ico">⚙</span>Настройки</button></nav>
-<script>
-const nav=[...document.querySelectorAll('.nav button')];
-function go(id){nav.forEach(b=>b.classList.toggle('active',b.dataset.view===id));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));window.scrollTo({top:0,behavior:'smooth'});}
-nav.forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
-document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.goto)));
-let hidden=false;
-function privacy(){hidden=!hidden;document.querySelectorAll('.sensitive').forEach(el=>{if(!el.dataset.raw)el.dataset.raw=el.textContent;el.textContent=hidden?'••••••••':el.dataset.raw;});document.getElementById('hideBalance').textContent=hidden?'◎':'◉';document.getElementById('privacy').textContent=hidden?'◎':'◉';}
-document.getElementById('hideBalance').addEventListener('click',privacy);document.getElementById('privacy').addEventListener('click',privacy);
-document.querySelectorAll('.period').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.period').forEach(x=>x.classList.toggle('active',x===b));}));
-</script>
-</body></html>
+import os
+import time
+from decimal import Decimal
+from pybit.unified_trading import HTTP
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv("ImujnNLjDqzi4PLmiB")
+API_SECRET = os.getenv("hJSYFuOTv9BU4rIBXpjxc4M6JNxZ2txgdWVq")
+
+session = HTTP(
+testnet=False,
+api_key=API_KEY,
+api_secret=API_SECRET
+)
+
+def num(value):
+return Decimal(str(value or 0))
+
+def money(value):
+return f"${value:,.2f}"
+
+def get_positions():
+response = session.get_positions(
+category="linear",
+settleCoin="USDT"
+)
+
+if response["retCode"] != 0:
+    raise Exception(response["retMsg"])
+
+return [
+    p for p in response["result"]["list"]
+    if num(p["size"]) > 0
+]
+def show_positions():
+positions = get_positions()
+
+os.system("cls" if os.name == "nt" else "clear")
+
+total_pnl = Decimal("0")
+total_value = Decimal("0")
+total_margin = Decimal("0")
+
+print("=" * 65)
+print("             BYBIT POSITION MONITOR")
+print("=" * 65)
+
+if not positions:
+    print("\nНет открытых USDT-фьючерсных позиций.")
+
+for p in positions:
+    symbol = p["symbol"]
+    side = p["side"]
+    size = num(p["size"])
+    entry = num(p["avgPrice"])
+    mark = num(p["markPrice"])
+    pnl = num(p["unrealisedPnl"])
+    value = abs(num(p["positionValue"]))
+    margin = num(p["positionIM"])
+    leverage = p["leverage"]
+
+    if margin > 0:
+        roi = pnl / margin * 100
+    else:
+        roi = Decimal("0")
+
+    total_pnl += pnl
+    total_value += value
+    total_margin += margin
+
+    print(f"\n{'🟢 LONG' if side == 'Buy' else '🔴 SHORT'} | {symbol}")
+    print("-" * 65)
+    print(f"Размер позиции:       {size}")
+    print(f"Сумма позиции:        {money(value)}")
+    print(f"Цена входа:           {entry}")
+    print(f"Текущая цена:         {mark}")
+    print(f"Плечо:                x{leverage}")
+    print(f"Маржа:                {money(margin)}")
+    print(f"Прибыль / убыток:     {money(pnl)}")
+    print(f"Доходность:           {roi:+.2f}%")
+    print(f"Ликвидация:           {p['liqPrice'] or '-'}")
+    print(f"Take Profit:          {p['takeProfit'] or '-'}")
+    print(f"Stop Loss:            {p['stopLoss'] or '-'}")
+
+print("\n" + "=" * 65)
+print("                 ОБЩАЯ СТАТИСТИКА")
+print("=" * 65)
+print(f"Открытых позиций:     {len(positions)}")
+print(f"Общий объём:          {money(total_value)}")
+print(f"Общая маржа:          {money(total_margin)}")
+print(f"Общий PnL:            {money(total_pnl)}")
+
+if total_margin > 0:
+    print(f"Общий ROI:            {total_pnl / total_margin * 100:+.2f}%")
+
+print("=" * 65)
+print("Обновление каждые 5 секунд. Ctrl+C для выхода.")
+while True:
+try:
+show_positions()
+except Exception as error:
+print("Ошибка Bybit API:", error)
+
+time.sleep(5)
